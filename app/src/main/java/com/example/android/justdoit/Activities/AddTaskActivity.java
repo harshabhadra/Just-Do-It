@@ -1,4 +1,4 @@
-package com.example.android.justdoit;
+package com.example.android.justdoit.Activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -20,6 +21,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.android.justdoit.Adapters.CategoryAdapter;
+import com.example.android.justdoit.Model.CompletedTask;
+import com.example.android.justdoit.R;
+import com.example.android.justdoit.Model.TaskItem;
+import com.example.android.justdoit.TaskViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
@@ -156,26 +162,34 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
         //Setting up spinner
         setUpSpinner();
 
+        // If user is updating a task
         if (taskId != DEFAULT_TASK_ID){
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    if (isYesButtonClicked) {
-                        hh = hourEditText.getText().toString();
-                        mm = minuteEditText.getText().toString();
-                        timeSetByUser = hh + ":" + mm + " " + amOrpm;
+                    if (!taskName.getText().toString().isEmpty()) {
+                        if (isYesButtonClicked) {
+                            hh = hourEditText.getText().toString();
+                            mm = minuteEditText.getText().toString();
+                            timeSetByUser = hh + ":" + mm + " " + amOrpm;
+                        } else {
+                            timeSetByUser = time;
+                        }
+                        TaskItem taskItem1 = new TaskItem(taskId, image, taskName.getText().toString(),
+                                taskDescription.getText().toString(), timeSetByUser);
+                        taskViewModel.updateSingleTask(taskItem1);
+                        finish();
                     }else {
-                        timeSetByUser = time;
+                        Toast.makeText(getApplicationContext(), "Task must have a name", Toast.LENGTH_LONG).show();
+                        taskName.setHighlightColor(Color.RED);
                     }
-                    TaskItem taskItem1 = new TaskItem(taskId,image, taskName.getText().toString(),
-                            taskDescription.getText().toString(), timeSetByUser);
-                    taskViewModel.updateSingleTask(taskItem1);
-                    finish();
                 }
             });
+
         }else{
 
+            //If user is adding a new task
             //Set action for save button
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -197,10 +211,18 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
                 //Getting the current locale time
                 currentTime = getCurrentTime();
                 TaskItem taskItem = new TaskItem(image, taskName.getText().toString(), taskDescription.getText().toString(), currentTime);
-                taskViewModel.insertTask(taskItem);
-                Intent startIntent = new Intent(AddTaskActivity.this, MainActivity.class);
-                startIntent.putExtra("startNow", taskItem);
-                startActivity(startIntent);
+                CompletedTask completedTask = new CompletedTask(image, taskName.getText().toString(), taskDescription.getText().toString(), currentTime);
+                String currentTaskName = taskName.getText().toString();
+                if (!currentTaskName.isEmpty()) {
+                    taskViewModel.insertCompletedTask(completedTask);
+                    Intent startIntent = new Intent(AddTaskActivity.this, MainActivity.class);
+                    startIntent.putExtra("startNow", taskItem);
+                    startActivity(startIntent);
+                    finish();
+                }else {
+                    Toast.makeText(getApplicationContext(), "Task must have a name", Toast.LENGTH_LONG).show();
+                    taskName.setHighlightColor(Color.RED);
+                }
             }
         });
 
@@ -211,12 +233,17 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
         saveTaskButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startButton.setVisibility(View.GONE);
-                saveTaskButton.setVisibility(View.GONE);
+                if (!taskName.getText().toString().isEmpty()) {
+                    startButton.setVisibility(View.GONE);
+                    saveTaskButton.setVisibility(View.GONE);
 
-                timerLabelTv.setVisibility(View.VISIBLE);
-                timerCard.setVisibility(View.VISIBLE);
-                saveButton.setVisibility(View.VISIBLE);
+                    timerLabelTv.setVisibility(View.VISIBLE);
+                    timerCard.setVisibility(View.VISIBLE);
+                    saveButton.setVisibility(View.VISIBLE);
+                }else {
+                    Toast.makeText(getApplicationContext(), "Task must have a name", Toast.LENGTH_LONG).show();
+                    taskName.setHighlightColor(Color.RED);
+                }
             }
         });
 
@@ -243,8 +270,6 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
-//                amOrpm = adapterView.getItemAtPosition(1).toString();
 
             }
         });

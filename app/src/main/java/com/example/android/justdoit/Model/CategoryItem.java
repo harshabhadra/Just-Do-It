@@ -1,4 +1,4 @@
-package com.example.android.justdoit;
+package com.example.android.justdoit.Model;
 
 public class CategoryItem {
 

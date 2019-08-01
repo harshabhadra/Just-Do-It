@@ -23,6 +23,7 @@
     <string name="update">Update</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="delete_all">Delete All</string>
 
     <!-- spinner-->
     <string-array name="spinner">

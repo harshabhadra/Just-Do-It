@@ -1,5 +1,7 @@
 package com.example.android.justdoit;
 
+import com.example.android.justdoit.Model.CategoryItem;
+
 import java.util.ArrayList;
 import java.util.List;
 

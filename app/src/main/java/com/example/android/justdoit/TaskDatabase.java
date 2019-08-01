@@ -6,10 +6,16 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {TaskItem.class}, version = 3, exportSchema = false)
+import com.example.android.justdoit.Dao.CompletedDao;
+import com.example.android.justdoit.Dao.TaskDao;
+import com.example.android.justdoit.Model.CompletedTask;
+import com.example.android.justdoit.Model.TaskItem;
+
+@Database(entities = {TaskItem.class,CompletedTask.class}, version = 5, exportSchema = false)
 public abstract class TaskDatabase extends RoomDatabase {
 
     public abstract TaskDao taskDao();
+    public abstract CompletedDao completedDao();
 
     private static TaskDatabase INSTANCE;
 

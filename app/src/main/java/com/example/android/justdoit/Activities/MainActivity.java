@@ -1,6 +1,7 @@
-package com.example.android.justdoit;
+package com.example.android.justdoit.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,6 +25,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.android.justdoit.Adapters.SavedTaskAdapter;
+import com.example.android.justdoit.Model.CompletedTask;
+import com.example.android.justdoit.Model.TaskItem;
+import com.example.android.justdoit.R;
+import com.example.android.justdoit.StatefulRecyclerView;
+import com.example.android.justdoit.TaskViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
@@ -31,6 +38,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -47,13 +55,18 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
     Button stopButton;
     Chronometer chronometer;
 
+    private String TAG = MainActivity.class.getSimpleName();
+
     StatefulRecyclerView savedTaskRecycler;
     TaskViewModel taskViewModel;
     SavedTaskAdapter savedTaskAdapter;
+    long elaspedMilliSeconds = 0;
 
     int noOfTask = 0;
     boolean isTimerRunning = false;
     long pauseOffset;
+    long sec = 0;
+    long tasktimeinSec = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Log.e(TAG, "onCreate");
 
         todayTextView = findViewById(R.id.today);
         dateTextView = findViewById(R.id.today_date);
@@ -166,8 +181,12 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
                     workInProgressLabel.setVisibility(View.VISIBLE);
                     workInProgressCard.setVisibility(View.VISIBLE);
                     currentTaskTextView.setText(taskItem.getTaskName());
+
+                    CompletedTask completedTask = new CompletedTask(taskItem.getCategoryImage(), taskItem.getTaskName(), taskItem.getTaskDescription(), taskItem.getTimeinSeconds());
+                    taskViewModel.insertCompletedTask(completedTask);
                     fab.setEnabled(false);
                     startChronometer();
+                    taskViewModel.deleteSingleTask(taskItem);
                 }
             }
 
@@ -196,10 +215,24 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
                 fab.setEnabled(true);
                 workInProgressLabel.setVisibility(View.GONE);
                 workInProgressCard.setVisibility(View.GONE);
+                tasktimeinSec = tasktimeinSec + sec;
+                Log.e("MainActivity", "taskTime: " + tasktimeinSec);
+                SharedPreferences.Editor editor = getSharedPreferences("record",MODE_PRIVATE).edit();
+                editor.putLong("sec",tasktimeinSec);
+                editor.apply();
                 stopChronometer();
                 resetChronometer();
                 savedTaskRecycler.setVisibility(View.VISIBLE);
 
+            }
+        });
+
+        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                elaspedMilliSeconds =+ SystemClock.elapsedRealtime() - chronometer.getBase();
+                sec = TimeUnit.MILLISECONDS.toSeconds(elaspedMilliSeconds);
+                Log.e("MainActivity: ", " " + sec);
             }
         });
 
@@ -212,12 +245,22 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e(TAG, "onResume");
+        SharedPreferences preferences = getSharedPreferences("record",MODE_PRIVATE);
+        tasktimeinSec = preferences.getLong("sec",0);
+        Log.e("MainAcitvity" , "taskTime: " + tasktimeinSec);
+    }
+
     //Stop the Chronometer
     private void stopChronometer() {
 
         if (isTimerRunning) {
             chronometer.stop();
             pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
+            Log.e("MainActivity", "PauseOffset: " + pauseOffset);
             isTimerRunning = false;
         }
     }
@@ -277,6 +320,15 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.completed_Task) {
+
+            Intent intent = new Intent(MainActivity.this, CompletedTaskActivity.class);
+            intent.putExtra("taskTime",tasktimeinSec);
+            SharedPreferences.Editor editor = getSharedPreferences("record",MODE_PRIVATE).edit();
+            editor.remove("sec");
+            editor.clear();
+            editor.putLong("sec",0);
+            editor.apply();
+            startActivity(intent);
             return true;
         }
 

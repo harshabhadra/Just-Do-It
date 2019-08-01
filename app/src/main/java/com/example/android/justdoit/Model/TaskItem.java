@@ -1,4 +1,4 @@
-package com.example.android.justdoit;
+package com.example.android.justdoit.Model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -17,18 +17,18 @@ public class TaskItem implements Parcelable {
 
     @NonNull
     @ColumnInfo(name = "image")
-    private Integer categoryImage;
+    public Integer categoryImage;
 
     @NonNull
     @ColumnInfo(name = "name")
-    private String taskName;
+    public String taskName;
 
     @ColumnInfo(name = "description")
-    private String taskDescription;
+    public String taskDescription;
 
     @NonNull
     @ColumnInfo(name = "time")
-    private String timeinSeconds;
+    public String timeinSeconds;
 
     public TaskItem(Integer categoryImage, String taskName, String taskDescription, String timeinSeconds) {
         this.categoryImage = categoryImage;

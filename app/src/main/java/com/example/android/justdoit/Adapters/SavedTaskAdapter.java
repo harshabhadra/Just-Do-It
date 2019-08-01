@@ -1,4 +1,4 @@
-package com.example.android.justdoit;
+package com.example.android.justdoit.Adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.android.justdoit.R;
+import com.example.android.justdoit.Model.TaskItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
