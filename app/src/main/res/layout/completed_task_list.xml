@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="6dp"
+    app:cardUseCompatPadding="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/completed_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            tools:src="@mipmap/ic_reminder"/>
+        <TextView
+            android:id="@+id/completed_Task_name"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_height="wrap_content"
+            tools:text="Android Development"/>
+        <TextView
+            android:id="@+id/completed_Task_timing_tv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:text="@string/tasks"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
