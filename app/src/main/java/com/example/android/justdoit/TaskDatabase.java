@@ -11,7 +11,7 @@ import com.example.android.justdoit.Dao.TaskDao;
 import com.example.android.justdoit.Model.CompletedTask;
 import com.example.android.justdoit.Model.TaskItem;
 
-@Database(entities = {TaskItem.class,CompletedTask.class}, version = 5, exportSchema = false)
+@Database(entities = {TaskItem.class,CompletedTask.class}, version = 6, exportSchema = false)
 public abstract class TaskDatabase extends RoomDatabase {
 
     public abstract TaskDao taskDao();

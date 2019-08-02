@@ -5,24 +5,47 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.example.android.justdoit.Model.CompletedTask;
 import com.example.android.justdoit.Model.TaskItem;
+import com.example.android.justdoit.Worker.NotificationWorker;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class TaskViewModel extends AndroidViewModel {
 
     Repository repository;
+    public WorkManager workManager;
     LiveData<List<TaskItem>> listLiveData;
     LiveData<List<CompletedTask>>completedTaskList;
 
     public TaskViewModel(@NonNull Application application) {
         super(application);
 
+        workManager = WorkManager.getInstance(application);
         repository = new Repository(application);
         listLiveData = repository.getTaskListItem();
         completedTaskList = repository.getCompletedList();
+    }
+
+    public void setNotification(String messge, long delay){
+
+        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(NotificationWorker.class)
+                .setInitialDelay(delay, TimeUnit.MINUTES)
+                .setInputData(stringToData(messge))
+                .build();
+        workManager.enqueue(oneTimeWorkRequest);
+    }
+
+    private Data stringToData(String s){
+
+        Data.Builder builder = new Data.Builder();
+        builder.putString("message", s);
+        return builder.build();
     }
 
     //Get list of task

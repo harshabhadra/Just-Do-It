@@ -115,12 +115,16 @@ public class CompletedTaskActivity extends AppCompatActivity {
 
     //Convert minute to hour
     private void convertToHour(long min) {
+//
+//        double convertMin = ((double) (min))/60;
+//        String s = String.valueOf(convertMin);
+//        String[]split = s.split("\\.");
+//        finalTimeHour.setText(split[0]);
+        long hour = min/60;
+        long minute = min % 60;
+        finalTimeHour.setText(String.valueOf(hour));
+        finalTimeMin.setText(String.valueOf(minute));
 
-        double convertMin = ((double) (min))/60;
-        String s = String.valueOf(convertMin);
-        String[]split = s.split("\\.");
-        finalTimeHour.setText(split[0]);
-        finalTimeMin.setText(split[1]);
     }
 
     @Override

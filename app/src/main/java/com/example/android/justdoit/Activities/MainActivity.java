@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
     long pauseOffset;
     long sec = 0;
     long tasktimeinSec = 0;
+    String notificationMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +158,50 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
             }
         });
 
+
+        //Setup stop button to stop Chronometer
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fab.setEnabled(true);
+                workInProgressLabel.setVisibility(View.GONE);
+                workInProgressCard.setVisibility(View.GONE);
+                tasktimeinSec = tasktimeinSec + sec;
+                Log.e("MainActivity", "taskTime: " + tasktimeinSec);
+                SharedPreferences.Editor editor = getSharedPreferences("record",MODE_PRIVATE).edit();
+                editor.putLong("sec",tasktimeinSec);
+                editor.apply();
+                stopChronometer();
+                resetChronometer();
+                savedTaskRecycler.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        swipeRecyclerView();
+
+        //Calculation the difference between start time and end time
+        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+            @Override
+            public void onChronometerTick(Chronometer chronometer) {
+                elaspedMilliSeconds =+ SystemClock.elapsedRealtime() - chronometer.getBase();
+                sec = TimeUnit.MILLISECONDS.toSeconds(elaspedMilliSeconds);
+                Log.e("MainActivity: ", " " + sec);
+            }
+        });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent addTaskIntent = new Intent(MainActivity.this, AddTaskActivity.class);
+                startActivity(addTaskIntent);
+            }
+        });
+    }
+
+    //Set swipe functionality to the RecyclerView
+    public void swipeRecyclerView(){
+
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
@@ -207,42 +252,6 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
         }).attachToRecyclerView(savedTaskRecycler);
-
-        //Setup stop button to stop Chronometer
-        stopButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fab.setEnabled(true);
-                workInProgressLabel.setVisibility(View.GONE);
-                workInProgressCard.setVisibility(View.GONE);
-                tasktimeinSec = tasktimeinSec + sec;
-                Log.e("MainActivity", "taskTime: " + tasktimeinSec);
-                SharedPreferences.Editor editor = getSharedPreferences("record",MODE_PRIVATE).edit();
-                editor.putLong("sec",tasktimeinSec);
-                editor.apply();
-                stopChronometer();
-                resetChronometer();
-                savedTaskRecycler.setVisibility(View.VISIBLE);
-
-            }
-        });
-
-        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                elaspedMilliSeconds =+ SystemClock.elapsedRealtime() - chronometer.getBase();
-                sec = TimeUnit.MILLISECONDS.toSeconds(elaspedMilliSeconds);
-                Log.e("MainActivity: ", " " + sec);
-            }
-        });
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent addTaskIntent = new Intent(MainActivity.this, AddTaskActivity.class);
-                startActivity(addTaskIntent);
-            }
-        });
     }
 
     @Override
@@ -318,7 +327,9 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+
+        //Open Today's Task Reports
+        if (!isTimerRunning)
         if (id == R.id.completed_Task) {
 
             Intent intent = new Intent(MainActivity.this, CompletedTaskActivity.class);

@@ -2,6 +2,7 @@ package com.example.android.justdoit.Activities;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,13 +24,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.justdoit.Adapters.CategoryAdapter;
 import com.example.android.justdoit.Model.CompletedTask;
-import com.example.android.justdoit.R;
 import com.example.android.justdoit.Model.TaskItem;
+import com.example.android.justdoit.R;
 import com.example.android.justdoit.TaskViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -52,6 +56,7 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
     EditText taskName;
     EditText taskDescription;
     EditText hourEditText;
+    String notificationMessage;
     EditText minuteEditText;
 
     TaskViewModel taskViewModel;
@@ -66,7 +71,9 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
     String currentTime;
     String timeSetByUser;
     int DEFAULT_TASK_ID = -1;
+    long delay = 0;
     int taskId = DEFAULT_TASK_ID;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +137,7 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
                     image = taskItem.getCategoryImage();
                     Picasso.get().load(taskItem.getCategoryImage()).into(taskImage);
                 }
-                     time =  taskItem.getTimeinSeconds();
+                time = taskItem.getTimeinSeconds();
                 notificationLabel.setText(String.format("Start Time is: %s", time));
             }
             timerLabelTv.setText(getResources().getString(R.string.do_u_want));
@@ -163,7 +170,7 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
         setUpSpinner();
 
         // If user is updating a task
-        if (taskId != DEFAULT_TASK_ID){
+        if (taskId != DEFAULT_TASK_ID) {
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -180,14 +187,14 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
                                 taskDescription.getText().toString(), timeSetByUser);
                         taskViewModel.updateSingleTask(taskItem1);
                         finish();
-                    }else {
+                    } else {
                         Toast.makeText(getApplicationContext(), "Task must have a name", Toast.LENGTH_LONG).show();
                         taskName.setHighlightColor(Color.RED);
                     }
                 }
             });
 
-        }else{
+        } else {
 
             //If user is adding a new task
             //Set action for save button
@@ -197,12 +204,47 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
                     hh = hourEditText.getText().toString();
                     mm = minuteEditText.getText().toString();
                     timeSetByUser = hh + ":" + mm + " " + amOrpm;
-                    TaskItem taskItem = new TaskItem(image, taskName.getText().toString(), taskDescription.getText().toString(), timeSetByUser);
-                    taskViewModel.insertTask(taskItem);
-                    finish();
+
+                    String currentTime = getCurrentTime();
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault());
+                        LocalTime start = LocalTime.parse(currentTime, formatter);
+                        LocalTime end = LocalTime.parse(timeSetByUser, formatter);
+
+                        Duration duration = Duration.between(start, end);
+                        delay = duration.toMinutes();
+                        Log.e("AddTaskActivity", "DateTimeFormatter Delay is: " + delay);
+                    } else {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
+                        try {
+                            Date date = dateFormat.parse(timeSetByUser);
+                            Date date1 = dateFormat.parse(currentTime);
+
+                            long difference = date.getTime() - date1.getTime();
+                            int days = (int) (difference / (1000 * 60 * 60 * 24));
+                            int hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
+                            delay = (int) (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
+                            Log.e("AddTaskActivity", "SimpleDateFormatter Delay is: " + delay);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if(delay>=0) {
+                        notificationMessage = taskName.getText().toString();
+                        TaskItem taskItem = new TaskItem(image, taskName.getText().toString(), taskDescription.getText().toString(), timeSetByUser);
+                        taskViewModel.insertTask(taskItem);
+                        taskViewModel.setNotification(notificationMessage, (delay - 1));
+                        finish();
+                    }else {
+                        timerLabelTv.setText(getResources().getString(R.string.invalid_time));
+                        timerLabelTv.setTextColor(Color.RED);
+                    }
                 }
             });
         }
+
 
         //Set action for start now button
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -219,7 +261,7 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
                     startIntent.putExtra("startNow", taskItem);
                     startActivity(startIntent);
                     finish();
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "Task must have a name", Toast.LENGTH_LONG).show();
                     taskName.setHighlightColor(Color.RED);
                 }
@@ -240,7 +282,7 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
                     timerLabelTv.setVisibility(View.VISIBLE);
                     timerCard.setVisibility(View.VISIBLE);
                     saveButton.setVisibility(View.VISIBLE);
-                }else {
+                } else {
                     Toast.makeText(getApplicationContext(), "Task must have a name", Toast.LENGTH_LONG).show();
                     taskName.setHighlightColor(Color.RED);
                 }
@@ -281,7 +323,7 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
         Date currentLocalTime = calendar.getTime();
 
-        DateFormat time = new SimpleDateFormat("HH:mm a", Locale.getDefault());
+        DateFormat time = new SimpleDateFormat("h:mm a", Locale.getDefault());
         time.setTimeZone(TimeZone.getDefault());
 
         return time.format(currentLocalTime);

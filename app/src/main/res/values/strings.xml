@@ -24,6 +24,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="delete_all">Delete All</string>
+    <string name="invalid_time">Invalid Time Entry</string>
 
     <!-- spinner-->
     <string-array name="spinner">
