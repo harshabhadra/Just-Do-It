@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView2"
@@ -8,6 +8,9 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".Activities.MainActivity"
     tools:showIn="@layout/activity_main">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/today"
@@ -106,9 +109,6 @@
         android:id="@+id/work_in_progress_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        app:cardCornerRadius="10dp"
         app:cardElevation="6dp"
         app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -121,29 +121,33 @@
 
             <TextView
                 android:id="@+id/current_task_name"
-                style="@style/TextAppearance.AppCompat.Headline"
+                style="@style/TextAppearance.AppCompat.Body1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:gravity="center"
                 android:layout_marginStart="8dp"
+                android:layout_weight="4"
                 tools:text="Task Name" />
 
             <Chronometer
                 android:id="@+id/chronometer_timer"
+                android:textColor="#FFFFFF"
                 style="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
+                android:gravity="center"
+                android:layout_weight="2"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_height="match_parent" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/chronometer_button"
                 style="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/colorPrimaryDark"
-                android:text="@string/stop"
-                android:textColor="#FFFFFF" />
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_stop_black_24dp"
+                />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
@@ -164,13 +168,12 @@
     <com.example.android.justdoit.StatefulRecyclerView
         android:id="@+id/saved_task_recycler"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/saved_work_label" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

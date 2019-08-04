@@ -20,12 +20,14 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.android.justdoit.Adapters.CategoryAdapter;
 import com.example.android.justdoit.Model.CompletedTask;
 import com.example.android.justdoit.Model.TaskItem;
 import com.example.android.justdoit.R;
+import com.example.android.justdoit.StatefulRecyclerView;
 import com.example.android.justdoit.TaskViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -42,7 +44,7 @@ import java.util.TimeZone;
 public class AddTaskActivity extends AppCompatActivity implements CategoryAdapter.onCategoryItemClickListener {
 
 
-    RecyclerView categoryRecyclerView;
+    StatefulRecyclerView categoryRecyclerView;
     CategoryAdapter categoryAdapter;
     ConstraintLayout addTaskTemplateLayout;
     TextView chooseCategoryTV;
@@ -98,7 +100,7 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
         minuteEditText = findViewById(R.id.minute);
         final Button yesButton = findViewById(R.id.yes_button);
         final Button noButton = findViewById(R.id.no_button);
-        TextView notificationLabel = findViewById(R.id.notification_label);
+        final TextView notificationLabel = findViewById(R.id.notification_label);
 
         yesButton.setBackgroundColor(Color.GREEN);
         noButton.setBackgroundColor(Color.RED);
@@ -201,45 +203,62 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
             saveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     hh = hourEditText.getText().toString();
                     mm = minuteEditText.getText().toString();
-                    timeSetByUser = hh + ":" + mm + " " + amOrpm;
 
-                    String currentTime = getCurrentTime();
+                    if (!hh.isEmpty() && !mm.isEmpty()) {
+                        int hour = Integer.valueOf(hh);
+                        int minute = Integer.valueOf(mm);
+                        if ((hour >= 0 && hour <= 12) && minute >= 0 && minute <= 59) {
+                            timeSetByUser = hh + ":" + mm + " " + amOrpm;
+                            String currentTime = getCurrentTime();
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault());
-                        LocalTime start = LocalTime.parse(currentTime, formatter);
-                        LocalTime end = LocalTime.parse(timeSetByUser, formatter);
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a", Locale.getDefault());
+                                LocalTime start = LocalTime.parse(currentTime, formatter);
+                                LocalTime end = LocalTime.parse(timeSetByUser, formatter);
 
-                        Duration duration = Duration.between(start, end);
-                        delay = duration.toMinutes();
-                        Log.e("AddTaskActivity", "DateTimeFormatter Delay is: " + delay);
-                    } else {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
-                        try {
-                            Date date = dateFormat.parse(timeSetByUser);
-                            Date date1 = dateFormat.parse(currentTime);
+                                Duration duration = Duration.between(start, end);
+                                delay = duration.toMinutes();
+                                Log.e("AddTaskActivity", "DateTimeFormatter Delay is: " + delay);
+                            } else {
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm a", Locale.getDefault());
+                                try {
+                                    Date date = dateFormat.parse(timeSetByUser);
+                                    Date date1 = dateFormat.parse(currentTime);
 
-                            long difference = date.getTime() - date1.getTime();
-                            int days = (int) (difference / (1000 * 60 * 60 * 24));
-                            int hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
-                            delay = (int) (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
-                            Log.e("AddTaskActivity", "SimpleDateFormatter Delay is: " + delay);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                                    long difference = date.getTime() - date1.getTime();
+                                    int days = (int) (difference / (1000 * 60 * 60 * 24));
+                                    int hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
+                                    delay = (int) (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
+                                    Log.e("AddTaskActivity", "SimpleDateFormatter Delay is: " + delay);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            if (delay >= 0 && delay <= 1440) {
+                                notificationMessage = taskName.getText().toString();
+                                TaskItem taskItem = new TaskItem(image, taskName.getText().toString(), taskDescription.getText().toString(), timeSetByUser);
+                                taskViewModel.insertTask(taskItem);
+                                taskViewModel.setNotification(notificationMessage, (delay - 1));
+                                finish();
+                            } else {
+                                timerLabelTv.setText(getResources().getString(R.string.invalid_time));
+                                timerLabelTv.setTextColor(Color.RED);
+                                notificationLabel.setText("Minimum delay: 5 min" + "\n" + "Maximum delay: 24 hr");
+
+                            }
+                        } else {
+                            timerLabelTv.setText(getResources().getString(R.string.invalid_time));
+                            timerLabelTv.setTextColor(Color.RED);
+                            notificationLabel.setText("Minimum delay: 5 min" + "\n" + "Maximum delay: 24 hr");
                         }
-                    }
-
-                    if(delay>=0) {
-                        notificationMessage = taskName.getText().toString();
-                        TaskItem taskItem = new TaskItem(image, taskName.getText().toString(), taskDescription.getText().toString(), timeSetByUser);
-                        taskViewModel.insertTask(taskItem);
-                        taskViewModel.setNotification(notificationMessage, (delay - 1));
-                        finish();
                     }else {
                         timerLabelTv.setText(getResources().getString(R.string.invalid_time));
                         timerLabelTv.setTextColor(Color.RED);
+                        notificationLabel.setText("Minimum delay: 5 min" + "\n" +"Maximum delay: 24 hr");
                     }
                 }
             });
@@ -291,7 +310,7 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
 
         //Setting up CategoryRecycler
         categoryRecyclerView.setHasFixedSize(true);
-        categoryRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        categoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         categoryAdapter = new CategoryAdapter(AddTaskActivity.this, AddTaskActivity.this);
         categoryRecyclerView.setAdapter(categoryAdapter);
     }

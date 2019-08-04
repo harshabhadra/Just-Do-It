@@ -108,6 +108,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:maxEms="2"
+                android:inputType="time"
+                android:maxLines="1"
                 android:layout_marginEnd="8dp"
                 android:text="@string/_00" />
 
@@ -126,6 +129,9 @@
                 android:id="@+id/minute"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxEms="2"
+                android:inputType="time"
+                android:maxLines="1"
                 android:layout_marginEnd="8dp"
                 android:text="@string/_00" />
 

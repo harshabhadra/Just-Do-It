@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,8 @@ import com.example.android.justdoit.Model.TaskItem;
 import com.example.android.justdoit.R;
 import com.example.android.justdoit.StatefulRecyclerView;
 import com.example.android.justdoit.TaskViewModel;
+import com.example.android.justdoit.Worker.NotificationUtils;
+import com.example.android.justdoit.Worker.ReminderTask;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
     CardView workInProgressCard;
     TextView currentTaskTextView;
     FloatingActionButton fab;
-    Button stopButton;
+    ImageButton stopButton;
     Chronometer chronometer;
 
     private String TAG = MainActivity.class.getSimpleName();
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
         stopButton = findViewById(R.id.chronometer_button);
         fab = findViewById(R.id.fab);
         chronometer = findViewById(R.id.chronometer_timer);
+        chronometer.setBackgroundColor(Color.GREEN);
 
         workInProgressLabel.setVisibility(View.GONE);
         workInProgressCard.setVisibility(View.GONE);
@@ -215,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
                     int position = viewHolder.getAdapterPosition();
                     TaskItem taskItem = savedTaskAdapter.getTask(position);
                     taskViewModel.deleteSingleTask(taskItem);
+
                     savedTaskAdapter.removeItem(position);
 
                 } else if (direction == ItemTouchHelper.RIGHT) {
@@ -222,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
                     TaskItem taskItem = savedTaskAdapter.getTask(position);
                     savedTaskAdapter.removeItem(position);
                     savedTaskRecycler.setVisibility(View.INVISIBLE);
-
                     workInProgressLabel.setVisibility(View.VISIBLE);
                     workInProgressCard.setVisibility(View.VISIBLE);
                     currentTaskTextView.setText(taskItem.getTaskName());
@@ -232,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
                     fab.setEnabled(false);
                     startChronometer();
                     taskViewModel.deleteSingleTask(taskItem);
+
                 }
             }
 

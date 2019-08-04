@@ -1,6 +1,7 @@
 package com.example.android.justdoit;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,6 +12,7 @@ import androidx.work.WorkManager;
 
 import com.example.android.justdoit.Model.CompletedTask;
 import com.example.android.justdoit.Model.TaskItem;
+import com.example.android.justdoit.Worker.NotificationUtils;
 import com.example.android.justdoit.Worker.NotificationWorker;
 
 import java.util.List;
