@@ -238,7 +238,7 @@ public class AddTaskActivity extends AppCompatActivity implements CategoryAdapte
                                 }
                             }
 
-                            if (delay >= 0 && delay <= 1440) {
+                            if (delay >= 5 && delay <= 1440) {
                                 notificationMessage = taskName.getText().toString();
                                 TaskItem taskItem = new TaskItem(image, taskName.getText().toString(), taskDescription.getText().toString(), timeSetByUser);
                                 taskViewModel.insertTask(taskItem);

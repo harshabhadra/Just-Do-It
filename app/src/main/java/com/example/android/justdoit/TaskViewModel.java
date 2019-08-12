@@ -43,6 +43,10 @@ public class TaskViewModel extends AndroidViewModel {
         workManager.enqueue(oneTimeWorkRequest);
     }
 
+    public void stopNottification(){
+        workManager.cancelAllWork();
+    }
+
     private Data stringToData(String s){
 
         Data.Builder builder = new Data.Builder();

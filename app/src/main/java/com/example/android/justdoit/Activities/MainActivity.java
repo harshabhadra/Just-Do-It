@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
     CardView workInProgressCard;
     TextView currentTaskTextView;
     FloatingActionButton fab;
+    TextView savedTaskLebel;
     ImageButton stopButton;
     Chronometer chronometer;
 
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
         currentTaskTextView = findViewById(R.id.current_task_name);
         stopButton = findViewById(R.id.chronometer_button);
         fab = findViewById(R.id.fab);
+        savedTaskLebel = findViewById(R.id.saved_work_label);
         chronometer = findViewById(R.id.chronometer_timer);
         chronometer.setBackgroundColor(Color.GREEN);
 
@@ -113,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
                 currentTaskTextView.setText(taskItem.getTaskName());
             }
             startChronometer();
+            fab.setVisibility(View.GONE);
+            savedTaskLebel.setVisibility(View.GONE);
             fab.setEnabled(false);
         }
 
@@ -167,6 +171,8 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
         stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                fab.setVisibility(View.VISIBLE);
+                savedTaskLebel.setVisibility(View.VISIBLE);
                 fab.setEnabled(true);
                 workInProgressLabel.setVisibility(View.GONE);
                 workInProgressCard.setVisibility(View.GONE);
@@ -219,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
                     int position = viewHolder.getAdapterPosition();
                     TaskItem taskItem = savedTaskAdapter.getTask(position);
                     taskViewModel.deleteSingleTask(taskItem);
-
+                    taskViewModel.stopNottification();
                     savedTaskAdapter.removeItem(position);
 
                 } else if (direction == ItemTouchHelper.RIGHT) {
@@ -233,6 +239,8 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
 
                     CompletedTask completedTask = new CompletedTask(taskItem.getCategoryImage(), taskItem.getTaskName(), taskItem.getTaskDescription(), taskItem.getTimeinSeconds());
                     taskViewModel.insertCompletedTask(completedTask);
+                    taskViewModel.stopNottification();
+                    fab.setVisibility(View.GONE);
                     fab.setEnabled(false);
                     startChronometer();
                     taskViewModel.deleteSingleTask(taskItem);

@@ -89,7 +89,7 @@ public class NotificationUtils {
     private static NotificationCompat.Action letsGoAction(Context context) {
 
         Intent letsGoIntent = new Intent(context, MainActivity.class);
-
+        letsGoIntent.setAction(ReminderTask.ACTION_CANCEL_NOTIFICATION);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
                 ACTION_GO_PENDING_INTENT_ID,

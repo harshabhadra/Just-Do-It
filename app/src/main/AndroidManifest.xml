@@ -14,18 +14,18 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".Activities.CompletedTaskActivity"
-            android:configChanges="orientation|screenSize"
+            android:label="Reports"
             android:parentActivityName=".Activities.MainActivity">
         </activity>
         <activity
             android:name=".Activities.AddTaskActivity"
-            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
             android:parentActivityName=".Activities.MainActivity">
         </activity>
         <activity
             android:name=".Activities.MainActivity"
             android:launchMode="singleTop"
-            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

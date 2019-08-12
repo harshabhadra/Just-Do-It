@@ -108,10 +108,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:maxEms="2"
-                android:inputType="time"
-                android:maxLines="1"
                 android:layout_marginEnd="8dp"
+                android:inputType="time"
+                android:maxEms="2"
+                android:maxLines="1"
                 android:text="@string/_00" />
 
             <TextView
@@ -129,10 +129,10 @@
                 android:id="@+id/minute"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxEms="2"
-                android:inputType="time"
-                android:maxLines="1"
                 android:layout_marginEnd="8dp"
+                android:inputType="time"
+                android:maxEms="2"
+                android:maxLines="1"
                 android:text="@string/_00" />
 
             <TextView
@@ -148,9 +148,10 @@
 
             <Spinner
                 android:id="@+id/time_spinner"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
+
             </Spinner>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -199,9 +200,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:visibility="gone"
         android:layout_marginEnd="8dp"
         android:text="@string/no"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@+id/start_time_label"
         app:layout_constraintTop_toBottomOf="@+id/timer_card" />
 
