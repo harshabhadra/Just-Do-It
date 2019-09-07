@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.android.justdoit.Activities.MainActivity">
+    tools:context="com.technoidtintin.android.justdoit.Activities.MainActivity">
     <item
         android:id="@+id/completed_Task"
         android:orderInCategory="100"

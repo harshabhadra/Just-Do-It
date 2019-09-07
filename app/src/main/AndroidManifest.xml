@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.android.justdoit">
+    package="com.technoidtintin.android.justdoit">
 
     <dist:module dist:instant="true" />
 
@@ -13,20 +13,31 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Activities.CompletedTaskActivity"
+        <receiver android:name="com.technoidtintin.android.justdoit.ToDoListWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/to_do_list_widget_info" />
+        </receiver>
+
+        <activity
+            android:name="com.technoidtintin.android.justdoit.Activities.CompletedTaskActivity"
             android:label="Reports"
-            android:parentActivityName=".Activities.MainActivity">
+            android:parentActivityName="com.technoidtintin.android.justdoit.Activities.MainActivity">
         </activity>
         <activity
-            android:name=".Activities.AddTaskActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.MainActivity">
+            android:name="com.technoidtintin.android.justdoit.Activities.AddTaskActivity"
+            android:parentActivityName="com.technoidtintin.android.justdoit.Activities.MainActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".Activities.MainActivity"
+            android:name="com.technoidtintin.android.justdoit.Activities.MainActivity"
+            android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,8 +46,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".NotficationIntentService"
-            android:exported="false"/>
+        <service
+            android:name="com.technoidtintin.android.justdoit.NotficationIntentService"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -165,7 +165,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
-        <com.example.android.justdoit.StatefulRecyclerView
+        <com.technoidtintin.android.justdoit.StatefulRecyclerView
             android:id="@+id/saved_task_recycler"
             android:layout_width="0dp"
             android:layout_height="match_parent"

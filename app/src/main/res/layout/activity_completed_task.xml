@@ -108,9 +108,9 @@
             </androidx.cardview.widget.CardView>
         </LinearLayout>
 
-        <com.example.android.justdoit.StatefulRecyclerView
+        <com.technoidtintin.android.justdoit.StatefulRecyclerView
             android:id="@+id/completed_Task_recycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></com.example.android.justdoit.StatefulRecyclerView>
+            android:layout_height="wrap_content"></com.technoidtintin.android.justdoit.StatefulRecyclerView>
     </LinearLayout>
 </ScrollView>

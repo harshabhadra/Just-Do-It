@@ -4,7 +4,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.1"
     defaultConfig {
-        applicationId "com.example.android.justdoit"
+        applicationId "com.technoidtintin.android.justdoit"
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
@@ -21,7 +21,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.google.android.material:material:1.0.0'
     testImplementation 'junit:junit:4.12'
@@ -37,14 +37,14 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     annotationProcessor "androidx.room:room-compiler:$room_version"
 
-    //ViewModel and Livedata
+    //ViewModel and LiveData
     def lifecycle_version = "2.0.0"
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
 
-    //implementing swipe decortor
+    //implementing swipe decorator
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.1'
 
     //WorkManager Implementation
