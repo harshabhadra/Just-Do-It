@@ -32,11 +32,11 @@ public class TaskViewModel extends AndroidViewModel {
         completedTaskList = repository.getCompletedList();
     }
 
-    public void setNotification(String messge, long delay){
+    public void setNotification(String message, long delay){
 
         OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(NotificationWorker.class)
                 .setInitialDelay(delay, TimeUnit.MINUTES)
-                .setInputData(stringToData(messge))
+                .setInputData(stringToData(message))
                 .build();
         workManager.enqueue(oneTimeWorkRequest);
     }

@@ -51,16 +51,18 @@ public class CompletedTaskActivity extends AppCompatActivity {
         completedTaskTv.setBackgroundColor(Color.GREEN);
         completedTaskTv.setTextColor(Color.WHITE);
 
-        if (savedInstanceState != null){
-            todaysTimeInSec = savedInstanceState.getLong("totaltime");
-        }
+        if (savedInstanceState != null) {
 
-        //Getting Intent
-        Intent intent = getIntent();
-        if (intent.hasExtra("taskTime")) {
+        time = savedInstanceState.getLong("time");
+        setMinHour();
+        } else {
+            //Getting Intent
+            Intent intent = getIntent();
+            if (intent.hasExtra("taskTime")) {
 
-             todaysTimeInSec = intent.getLongExtra("taskTime", 0);
-            Log.e(TAG,"time from intent: " + todaysTimeInSec);
+                todaysTimeInSec = intent.getLongExtra("taskTime", 0);
+                Log.e(TAG, "time from intent: " + todaysTimeInSec);
+            }
 
             SharedPreferences preferences = getSharedPreferences("time", MODE_PRIVATE);
             time = preferences.getLong("sec", 0);
@@ -74,21 +76,37 @@ public class CompletedTaskActivity extends AppCompatActivity {
             }
 
             Log.e(TAG, "time is : " + time);
-
-            if (time >= 60) {
-                minutes = convertToMinute(time);
-                if (minutes<60) {
-                    finalTimeMin.setText(String.valueOf(minutes));
-                }else {
-
-                    convertToHour(minutes);
-                }
-
-            }else {
-                Log.e(TAG,"input is less than 60");
-            }
+            setMinHour();
         }
 
+        populateUi();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+      outState.putLong("time", time);
+    }
+
+    //Populate min and hour
+    private void setMinHour(){
+        if (time >= 60) {
+            minutes = convertToMinute(time);
+            if (minutes < 60) {
+                finalTimeMin.setText(String.valueOf(minutes));
+            } else {
+
+                convertToHour(minutes);
+            }
+
+        } else {
+            Log.e(TAG, "input is less than 60");
+        }
+    }
+
+    //Populate the Ui with completed tasks
+    private void populateUi(){
         //Populating the complete RecyclerView
         completedRecycler = findViewById(R.id.completed_Task_recycler);
         completedRecycler.setHasFixedSize(true);
@@ -110,26 +128,19 @@ public class CompletedTaskActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putLong("totaltime",todaysTimeInSec);
-    }
-
     //Convert seconds in minute
     private long convertToMinute(long sec) {
-        long min = sec/60;
-        Log.e(TAG,"Minute: " + min);
+        long min = sec / 60;
+        Log.e(TAG, "Minute: " + min);
         return min;
     }
 
     //Convert minute to hour
     private void convertToHour(long min) {
-        long hour = min/60;
-        long minute = min % 60;
+         hour = min / 60;
+         minutes = min % 60;
         finalTimeHour.setText(String.valueOf(hour));
-        finalTimeMin.setText(String.valueOf(minute));
+        finalTimeMin.setText(String.valueOf(minutes));
 
     }
 

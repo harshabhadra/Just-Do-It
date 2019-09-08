@@ -1,5 +1,6 @@
 package com.technoidtintin.android.justdoit.Activities;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -13,8 +14,10 @@ import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
@@ -337,18 +340,20 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
 
 
         //Open Today's Task Reports
-        if (!isTimerRunning)
-        if (id == R.id.completed_Task) {
+        if (!isTimerRunning && id == R.id.completed_Task) {
 
-            Intent intent = new Intent(MainActivity.this, CompletedTaskActivity.class);
-            intent.putExtra("taskTime",tasktimeinSec);
-            SharedPreferences.Editor editor = getSharedPreferences("record",MODE_PRIVATE).edit();
-            editor.remove("sec");
-            editor.clear();
-            editor.putLong("sec",0);
-            editor.apply();
-            startActivity(intent);
-            return true;
+                Intent intent = new Intent(MainActivity.this, CompletedTaskActivity.class);
+                intent.putExtra("taskTime", tasktimeinSec);
+                SharedPreferences.Editor editor = getSharedPreferences("record", MODE_PRIVATE).edit();
+                editor.remove("sec");
+                editor.clear();
+                editor.putLong("sec", 0);
+                editor.apply();
+                startActivity(intent);
+                return true;
+
+        }else if (isTimerRunning && id == R.id.completed_Task){
+            Toast.makeText(getApplicationContext(),"Timer is running",Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -360,5 +365,54 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
         Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
         intent.putExtra("savedTask", savedTaskAdapter.getTask(position));
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Log.e(TAG,"onBackPressed");
+        if (isTimerRunning) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("Timer will stop. Do you want to exit?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    finish();
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
+            AlertDialog dialog =builder.create();
+            dialog.show();
+            Log.e(TAG,"Alert Dialog created");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG,"onDestroy");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e(TAG, "onStop");
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Log.e(TAG, "onPause");
+
     }
 }
