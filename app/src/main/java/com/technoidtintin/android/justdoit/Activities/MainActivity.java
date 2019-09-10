@@ -369,7 +369,6 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         Log.e(TAG,"onBackPressed");
         if (isTimerRunning) {
 
@@ -379,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
             builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    finish();
+                    MainActivity.super.onBackPressed();
                 }
             });
 
@@ -392,6 +391,8 @@ public class MainActivity extends AppCompatActivity implements SavedTaskAdapter.
             AlertDialog dialog =builder.create();
             dialog.show();
             Log.e(TAG,"Alert Dialog created");
+        }else {
+            super.onBackPressed();
         }
     }
 
